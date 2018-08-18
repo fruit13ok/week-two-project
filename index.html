@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="style.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script> -->
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"
+        defer></script>
     <script src="app.js" defer></script>
 </head>
+
 <body>
     <main>
         <h1>Categories</h1>
@@ -16,6 +20,7 @@
             <button id='btnGMO'>Genetically Modified Organism</button>
             <button id='btnEX'>Exotic</button>
         </nav>
+        <!-- this section will be use javascript to append child elements -->
         <section class="flexSection1">
 
         </section>
@@ -24,11 +29,14 @@
         <h1>Shopping Cart</h1>
         <nav>
             <button id='btnClear'>Clear Cart</button>
+            <!-- this p will be update by javascript -->
             <p>Total: </p>
         </nav>
+        <!-- this section will be use javascript to append child elements -->
         <section class="flexSection2">
-            
+
         </section>
     </aside>
 </body>
+
 </html>

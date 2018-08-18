@@ -1,3 +1,9 @@
+// ask the following:
+// how to refactor code that working with DOM? break code into function but limited by context scoope.
+// how to pass context scoope? like where I clicked? from within callback function to globel?
+// DOM remove element give me error. need to find out why? fix?
+// need to understand more about how to get where I clicked? different ways / situation.
+
 // https://www.w3schools.com/jsref/prop_win_localstorage.asp
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
 // https://www.w3schools.com/tags/att_global_data.asp
@@ -29,13 +35,13 @@ var exFoods = [
 // arraies for food displaying in categories and in cart
 var curFoods = [];
 var curCart = [];
-var totalPrice = 0;
+var totalPrice = 0 || parseInt(localStorage.totalPrice);
 
 // locations of categories to populate images and cart to populate text
 var categoriesPageSection = document.querySelector('body main section');
 var cartPageSection = document.querySelector('body aside section');
 var totalPriceP = document.querySelector('body aside nav p');
-totalPriceP.innerText = '' || localStorage.totalPrice;
+totalPriceP.innerText = 'Total: ' + totalPrice;
 
 // select and listen to 4 buttons
 var btnMolecularGastronomy = document.querySelector('#btnMG');
@@ -91,7 +97,6 @@ function addElementToCategoriesPage (obj, index) {
     newDiv.appendChild(newDivP);
     newDiv.appendChild(newDivH4);
     categoriesPageSection.appendChild(newDiv);
-    // categoriesPageSection.
 }
 
 // remove node from parent node
@@ -101,7 +106,6 @@ function removeAllNodeFrom(parentNode){
 
 // locate all element inside section with .card class
 // add a click listener to each of them, and call addToCart function but don't invoke it
-// var cards = document.querySelectorAll('div'); 
 function foodSelectListener(){
     var cards = document.querySelectorAll('.card'); 
     for (var i = 0; i < cards.length; i++) {
@@ -117,12 +121,18 @@ function addToCart (e) {
     // console.log(this.className);            //see its class
     // this.style.backgroundColor = "red";
     // console.log(this.id);                       //see selected id
+    // console.log("Add to Cart: ", e)
     var clickedFood = curFoods.filter((food)=>{
          return (food.pText === this.id);
     }).pop();
-    console.log('clickedFood', clickedFood);
+    // console.log('clickedFood', clickedFood);
     curCart.push(clickedFood);
+    // console.log('clickedFood',typeof clickedFood.h4Price);
+    totalPrice += clickedFood.h4Price;
+    
+    totalPriceP.innerText = 'Total: ' + totalPrice;
     showCart();
+    saveLocalData();
 }
 
 // remove what was showing, show the whole list to cart page
@@ -140,50 +150,30 @@ function addToCartPage(obj, index) {
     var h4Price = obj.h4Price;
     // create new element 
     var newP = document.createElement("p");
-    // var newH4 = document.createElement("h4");
     // insert id to element
     newP.id = pText;
+    newP.setAttribute('data-price2', h4Price);
     // set text to p element
-    newP.innerText = pText + " $ " + h4Price;
-    // set price to h4
-    // newH4.innerText = "$ " + h4Price;
+    newP.innerText = pText + " $" + h4Price;
     // append child to parent
     cartPageSection.appendChild(newP);
-    // cartPageSection.appendChild(newH4);
-    cartItemSelectListener();
 }
 
-
-function cartItemSelectListener(){
-    totalPrice = curCart.reduce((acc, cur) => (acc + cur.h4Price), 0);
-    totalPriceP.innerText = 'Total: ' + totalPrice;
-    console.log(totalPriceP);
-    saveLocalData();
-
-    var cartItems = cartPageSection.querySelectorAll('p'); 
-    cartItems.forEach(function(item){
-        console.log(curCart);
-        item.addEventListener('click', function() {
-            console.log(this.id);
-            // removeChild work but has error
-            // this.parentNode.removeChild(this.nextSibling);
-            this.parentNode.removeChild(this);
-            // anime doesn't work, only remove work, but REMOVE ALL
-            // $(this).next().animate({left: '100px'});
-            // $(this).animate({left: '100px'});
-            // $(this).next().animate({left: '100px'}, function(){ $(this).next().remove(); });
-            // $(this).animate({left: '100px'}, function(){ $(this).remove(); });
-            // $(this).next().remove();
-            // $(this).remove();
-            var index = curCart.findIndex(food => food.pText === this.id)
-            curCart.splice(index, 1);
-            console.log(curCart);
-            totalPrice = curCart.reduce((acc, cur) => (acc + cur.h4Price), 0);
-            totalPriceP.innerText = 'Total: ' + totalPrice;
-            saveLocalData();
-        });
-    });
-}
+// use Event Delegation for items inside the cart
+cartPageSection.addEventListener('click', function(e) {
+    var child = e.target
+    var i = 0;
+    while( (child = child.previousSibling) != null ){
+        i++;
+    } 
+    if(e.target && e.target.nodeName == 'P'){
+        totalPrice -= parseInt(e.target.getAttribute('data-price2'));
+        totalPriceP.innerText = 'Total: ' + totalPrice;
+        curCart.splice(i, 1);
+        e.target.remove();
+        saveLocalData();
+    }
+});
 
 function clearCart(){
     cartPageSection.innerHTML = '';
@@ -196,10 +186,9 @@ function clearCart(){
 function saveLocalData(){
     if(typeof(Storage) !== "undefined") {
         if (localStorage.totalPrice) {
-            localStorage.totalPrice = totalPriceP.innerText;
+            localStorage.totalPrice = parseInt(totalPrice);
         } else {
-            localStorage.totalPrice = 'Total: 0';
+            localStorage.totalPrice = 0;
         }
-        totalPriceP.innerText = localStorage.totalPrice;
     }
 }

@@ -2,14 +2,12 @@ body, main, aside, nav, section {
     border: .1rem solid black;
     box-sizing: border-box;
 }
-/* span{
-    text-align: center;
-} */
 nav{
     height: 10vh;
     display: flex;
     justify-content: space-around;
 }
+/* I was trying to make button width be as long as button name when I have more time */
 button{
     /* width: 15vw; */
 }
